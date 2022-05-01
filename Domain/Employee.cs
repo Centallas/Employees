@@ -7,11 +7,11 @@ namespace Domain
         the ID for us and send it back to us.
         We can actually do it all inside the client.*/
         public Guid Id { get; set; }
-        public string? employee_name { get; set; }
+        public string employee_name { get; set; }
         public int employee_salary { get; set; }
         public int employee_age { get; set; }
         public int employee_annual_salary { get; set; }
         public DateTime Date { get; set; }
-        public string? profile_image { get; set; }
+        public string profile_image { get; set; }
     }
 }

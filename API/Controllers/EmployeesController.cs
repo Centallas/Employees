@@ -1,32 +1,44 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Application.Employees;
 using Domain;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers
 {
     public class EmployeesController : BaseApiController
     {
-        private readonly DataContext _context;
-        public EmployeesController(DataContext context)
-        {
-            _context = context;
-        }
+
         [HttpGet]
         public async Task<ActionResult<List<Employee>>> GetEmployees()
         {
-            return await _context.Employees.ToListAsync();
+            return await Mediator.Send(new List.Query());
+
         }
 
         [HttpGet("{id}")] // employees/id
         public async Task<ActionResult<Employee>> GetEmployee(Guid id)
         {
-            return await _context.Employees.FindAsync(id);
+            return await Mediator.Send(new Details.Query { Id = id });
         }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateEmployee(Employee employee)
+        {
+            return Ok(await Mediator.Send(new Create.Command { Employee = employee }));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> EditEmployee(Guid id, Employee employee)
+        {
+            employee.Id = id;
+            return Ok(await Mediator.Send(new Edit.Command { Employee = employee }));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteActivity(Guid id)
+        {
+            return Ok(await Mediator.Send(new Delete.Command { Id = id }));
+        }
+
 
     }
 }
