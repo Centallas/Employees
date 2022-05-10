@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SyntheticEvent, useState } from "react";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { Employee } from "../../../app/layout/models/employee";
 
@@ -6,9 +6,16 @@ interface Props {
     employees: Employee[];
     selectEmployee: (id: string) => void;
     deleteEmployee: (id: string) => void;
+    submitting: boolean;
 }
 
-export default function EmployeeList({ employees, selectEmployee, deleteEmployee }: Props) {
+export default function EmployeeList({ employees, selectEmployee, deleteEmployee, submitting }: Props) {
+    const [target, setTarget] = useState('');
+
+    function handleEmployeeDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
+        setTarget(e.currentTarget.name);
+        deleteEmployee(id);
+    }
     return (
         <Segment>
             <Item.Group divided>
@@ -23,7 +30,14 @@ export default function EmployeeList({ employees, selectEmployee, deleteEmployee
                             </Item.Description>
                             <Item.Extra>
                                 <Button onClick={() => selectEmployee(employee.id)} floated='right' content='View' color='blue' />
-                                <Button onClick={() => deleteEmployee(employee.id)} floated='right' content='Delete' color='red' />
+                                <Button
+                                    name={employee.id}
+                                    loading={submitting && target === employee.id}
+                                    onClick={(e) => handleEmployeeDelete(e, employee.id)}
+                                    floated='right'
+                                    content='Delete'
+                                    color='red'
+                                />
                                 <Label basic content={employee.date} />
                             </Item.Extra>
                         </Item.Content>

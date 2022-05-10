@@ -14,15 +14,19 @@ interface Props {
     closeForm: () => void;
     createOrEdit: (employee: Employee) => void;
     deleteEmployee: (id: string) => void;
+    submitting: boolean;
 }
 
 export default function EmployeeDashboard({ employees, selectedEmployee,
-    selectEmployee, cancelSelectEmployee, editMode, openForm, closeForm, createOrEdit, deleteEmployee }: Props) {
+    selectEmployee, cancelSelectEmployee, editMode, openForm, closeForm, createOrEdit, deleteEmployee,submitting }: Props) {
     return (
         <Grid>
             <Grid.Column width='10'>
                 <EmployeeList employees={employees}
-                    selectEmployee={selectEmployee} deleteEmployee={deleteEmployee} />
+                    selectEmployee={selectEmployee} 
+                    deleteEmployee={deleteEmployee} 
+                    submitting={submitting}
+                    />
             </Grid.Column>
             <GridColumn width='6'>
                 {selectedEmployee && !editMode &&
@@ -32,7 +36,12 @@ export default function EmployeeDashboard({ employees, selectedEmployee,
                         openForm={openForm}
                     />}
                 {editMode &&
-                    <EmployeeForm closeForm={closeForm} employee={selectedEmployee} createOrEdit={createOrEdit} />}
+                    <EmployeeForm 
+                        closeForm={closeForm} 
+                        employee={selectedEmployee} 
+                        createOrEdit={createOrEdit} 
+                        submitting={submitting}
+                        />}
             </GridColumn>
         </Grid>
     )
