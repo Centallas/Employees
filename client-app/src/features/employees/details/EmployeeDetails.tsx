@@ -18,10 +18,11 @@ export default function EmployeeDetails({ employee, cancelSelectEmployee, openFo
             <Card.Content>
                 <Card.Header>{employee.employee_name}</Card.Header>
                 <Card.Meta>
-                    <span>{employee.employee_salary}</span>
+                    <span className='date'> Date of Join: {employee.date}</span>
                 </Card.Meta>
-                <Card.Description>                    
-                   {employee.employee_annual_salary}
+                <Card.Description>
+                    Annual Salary:{employee.employee_annual_salary} <br/>
+                    Montly Salary: <span>{employee.employee_salary}</span>
                 </Card.Description>
             </Card.Content>
             <Card.Content extra>

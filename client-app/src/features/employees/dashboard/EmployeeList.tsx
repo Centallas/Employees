@@ -23,10 +23,10 @@ export default function EmployeeList({ employees, selectEmployee, deleteEmployee
                     <Item key={employee.id}>
                         <Item.Content>
                             <Item.Header as='a'>{employee.employee_name}</Item.Header>
-                            <Item.Meta>{employee.employee_age}</Item.Meta>
+                            <Item.Meta>{'Age:'} {employee.employee_age}</Item.Meta>
                             <Item.Description>
-                                <div>{employee.employee_salary}</div>
-                                <div>{employee.employee_annual_salary}</div>
+                                <div>{'Monthly Salary:'} {employee.employee_salary}</div>
+                                <div>{'Annual Salary:'} {employee.employee_annual_salary}</div>
                             </Item.Description>
                             <Item.Extra>
                                 <Button onClick={() => selectEmployee(employee.id)} floated='right' content='View' color='blue' />
@@ -38,6 +38,7 @@ export default function EmployeeList({ employees, selectEmployee, deleteEmployee
                                     content='Delete'
                                     color='red'
                                 />
+                                <div>{'Date of Join:'} </div>
                                 <Label basic content={employee.date} />
                             </Item.Extra>
                         </Item.Content>
