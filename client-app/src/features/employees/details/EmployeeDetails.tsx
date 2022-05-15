@@ -1,17 +1,15 @@
-import React from "react";
 import { Button, Card, Image } from "semantic-ui-react";
-import { Employee } from "../../../app/layout/models/employee";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-    employee: Employee;
-    cancelSelectEmployee: () => void;
-    openForm: (id: string) => void;
 
-}
+export default function EmployeeDetails() {
+    const { employeeStore } = useStore();
+    const { selectedEmployee: employee, openForm, cancelSelectedEmployee } = employeeStore;
 
-export default function EmployeeDetails({ employee, cancelSelectEmployee, openForm }: Props) {
+    if (!employee) return <LoadingComponent />;
+
     return (
-
         <Card fluid>
             <Image src='/assets/categoryImages/Employee.JPG' wrapped ui={false} />
             {/* <Image src={`/assets/categoryImages/${employee.category}.jpg`} /> */}
@@ -21,14 +19,14 @@ export default function EmployeeDetails({ employee, cancelSelectEmployee, openFo
                     <span className='date'> Date of Join: {employee.date}</span>
                 </Card.Meta>
                 <Card.Description>
-                    Annual Salary:{employee.employee_annual_salary} <br/>
-                    Montly Salary: <span>{employee.employee_salary}</span>
+                    Montly Salary: <span>{employee.employee_salary}<br />
+                        Annual Salary:{employee.employee_annual_salary} </span>
                 </Card.Description>
             </Card.Content>
             <Card.Content extra>
                 <Button.Group widths='2'>
                     <Button onClick={() => openForm(employee.id)} basic color='blue' content='Edit' />
-                    <Button onClick={cancelSelectEmployee} basic color='grey' content='Cancel' />
+                    <Button onClick={cancelSelectedEmployee} basic color='grey' content='Cancel' />
                 </Button.Group>
             </Card.Content>
         </Card>

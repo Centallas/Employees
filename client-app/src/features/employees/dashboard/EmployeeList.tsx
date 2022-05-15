@@ -1,16 +1,13 @@
-import React, { SyntheticEvent, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { SyntheticEvent, useState } from "react";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
 import { Employee } from "../../../app/layout/models/employee";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-    employees: Employee[];
-    selectEmployee: (id: string) => void;
-    deleteEmployee: (id: string) => void;
-    submitting: boolean;
-}
-
-export default function EmployeeList({ employees, selectEmployee, deleteEmployee, submitting }: Props) {
-    const [target, setTarget] = useState('');
+export default observer(function EmployeeList() {
+    const {employeeStore} = useStore()
+    const {deleteEmployee, employeesByDate, loading} = employeeStore;
+    const [target, setTarget] = useState('');   
 
     function handleEmployeeDelete(e: SyntheticEvent<HTMLButtonElement>, id: string) {
         setTarget(e.currentTarget.name);
@@ -19,7 +16,7 @@ export default function EmployeeList({ employees, selectEmployee, deleteEmployee
     return (
         <Segment>
             <Item.Group divided>
-                {employees.map(employee => (
+                {employeesByDate.map(employee => (
                     <Item key={employee.id}>
                         <Item.Content>
                             <Item.Header as='a'>{employee.employee_name}</Item.Header>
@@ -29,10 +26,10 @@ export default function EmployeeList({ employees, selectEmployee, deleteEmployee
                                 <div>{'Annual Salary:'} {employee.employee_annual_salary}</div>
                             </Item.Description>
                             <Item.Extra>
-                                <Button onClick={() => selectEmployee(employee.id)} floated='right' content='View' color='blue' />
+                                <Button onClick={() => employeeStore.selectEmployee(employee.id)} floated='right' content='View' color='blue' />
                                 <Button
                                     name={employee.id}
-                                    loading={submitting && target === employee.id}
+                                    loading={loading && target === employee.id}
                                     onClick={(e) => handleEmployeeDelete(e, employee.id)}
                                     floated='right'
                                     content='Delete'
@@ -47,4 +44,4 @@ export default function EmployeeList({ employees, selectEmployee, deleteEmployee
             </Item.Group>
         </Segment>
     )
-}
+})

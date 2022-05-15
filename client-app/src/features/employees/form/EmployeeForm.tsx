@@ -1,15 +1,13 @@
-import React, { ChangeEvent, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { ChangeEvent, useState } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
-import { Employee } from "../../../app/layout/models/employee";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-    employee: Employee | undefined;
-    closeForm: () => void;
-    createOrEdit: (employee: Employee) => void;
-    submitting: boolean;
-}
 
-export default function EmployeeForm({ employee: selectedEmployee, closeForm, createOrEdit, submitting }: Props) {
+export default observer(function EmployeeForm() {
+
+    const { employeeStore } = useStore();
+    const { selectedEmployee, closeForm, createEmployee, updateEmployee, loading } = employeeStore;
 
     const initialState = selectedEmployee ?? {
         id: '',
@@ -24,8 +22,7 @@ export default function EmployeeForm({ employee: selectedEmployee, closeForm, cr
     const [employee, setEmployee] = useState(initialState);
 
     function handleSubmit() {
-        // console.log(employee);
-        createOrEdit(employee);
+        employee.id ? updateEmployee(employee) : createEmployee(employee);
     }
     function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
         const { name, value } = event.target;
@@ -41,9 +38,9 @@ export default function EmployeeForm({ employee: selectedEmployee, closeForm, cr
                 <Form.Input placeholder='Anual Salary' readOnly value={employee.employee_annual_salary} name='employee_annual_salary' onChange={handleInputChange} />
                 {/* <Form.Input placeholder='Id' value={employee.id} name='id' onChange={handleInputChange} /> */}
                 <Form.Input type='date' placeholder='Date' value={employee.date} name='date' onChange={handleInputChange} />
-                <Button loading={submitting} floated='right' positive type='submit' content='Submit' />
+                <Button loading={loading} floated='right' positive type='submit' content='Submit' />
                 <Button onClick={closeForm} floated='right' type='button' content='Cancel' />
             </Form>
         </Segment>
     )
-}
+})

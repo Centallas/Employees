@@ -1,48 +1,25 @@
+import { observer } from "mobx-react-lite";
 import { Grid, GridColumn } from "semantic-ui-react";
-import { Employee } from "../../../app/layout/models/employee";
+import { useStore } from "../../../app/stores/store";
 import EmployeeDetails from "../details/EmployeeDetails";
 import EmployeeForm from "../form/EmployeeForm";
 import EmployeeList from "./EmployeeList";
 
-interface Props {
-    employees: Employee[];
-    selectedEmployee: Employee | undefined;
-    selectEmployee: (id: string) => void;
-    cancelSelectEmployee: () => void;
-    editMode: boolean;
-    openForm: (id: string) => void;
-    closeForm: () => void;
-    createOrEdit: (employee: Employee) => void;
-    deleteEmployee: (id: string) => void;
-    submitting: boolean;
-}
+export default observer(function EmployeeDashboard() {
 
-export default function EmployeeDashboard({ employees, selectedEmployee,
-    selectEmployee, cancelSelectEmployee, editMode, openForm, closeForm, createOrEdit, deleteEmployee,submitting }: Props) {
+    const { employeeStore } = useStore();
+    const { selectedEmployee, editMode } = employeeStore;
     return (
         <Grid>
             <Grid.Column width='10'>
-                <EmployeeList employees={employees}
-                    selectEmployee={selectEmployee} 
-                    deleteEmployee={deleteEmployee} 
-                    submitting={submitting}
-                    />
+                <EmployeeList />
             </Grid.Column>
             <GridColumn width='6'>
-                {selectedEmployee && !editMode &&
-                    <EmployeeDetails
-                        employee={selectedEmployee}
-                        cancelSelectEmployee={cancelSelectEmployee}
-                        openForm={openForm}
-                    />}
+                {selectedEmployee && !employeeStore.editMode &&
+                    <EmployeeDetails />}
                 {editMode &&
-                    <EmployeeForm 
-                        closeForm={closeForm} 
-                        employee={selectedEmployee} 
-                        createOrEdit={createOrEdit} 
-                        submitting={submitting}
-                        />}
+                    <EmployeeForm />}
             </GridColumn>
         </Grid>
     )
-}
+})
