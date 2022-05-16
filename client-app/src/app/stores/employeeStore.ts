@@ -1,7 +1,7 @@
 import { makeAutoObservable, runInAction } from "mobx";
 import agent from "../api/agent";
 import { Employee } from "../layout/models/employee";
-import { v4 as uuid } from 'uuid';
+
 
 export default class EmployeeStore {
 
@@ -18,20 +18,18 @@ export default class EmployeeStore {
     get employeesByDate() {
         return Array.from(this.employeeRegistry.values()).sort((a, b) =>
             Date.parse(b.date) - Date.parse(a.date));
-    }
+    };
 
     // setTitle=()=>{
     //     this.title = this.title + '!';
     //}
 
     loadEmployees = async () => {
+        this.loadingInitial = true;
         try {
             const employees = await agent.Employees.list();
-
             employees.forEach(employee => {
-                employee.date = employee.date.split('T')[0];
-                //this.employees.push(employee);
-                this.employeeRegistry.set(employee.id, employee);
+                this.setEmployee(employee);
             })
             this.setLoadingInitial(false);
 
@@ -39,34 +37,48 @@ export default class EmployeeStore {
             console.log(error);
             this.setLoadingInitial(false);
         }
-    }
+    };
+
+    loadEmployee = async (id: string) => {
+        let employee = this.getEmployee(id);
+        if (employee) {
+            this.selectedEmployee = employee;
+            return employee;
+        } else {
+            this.loadingInitial = true;
+            try {
+                employee = await agent.Employees.details(id);
+                this.setEmployee(employee);
+                runInAction(() => {
+                    this.selectedEmployee = employee;
+                })
+                this.setLoadingInitial(false);
+                return employee;
+            } catch (error) {
+                console.log(error);
+                this.setLoadingInitial(false);
+            }
+        }
+    };
+
+    private setEmployee = (employee: Employee) => {
+        employee.date = employee.date.split('T')[0];
+        this.employeeRegistry.set(employee.id, employee);
+    };
+
+    private getEmployee = (id: string) => {
+        return this.employeeRegistry.get(id);
+    };
+
+
     setLoadingInitial = (state: boolean) => {
         this.loadingInitial = state;
-    }
-
-    selectEmployee = (id: string) => {
-        //this.selectedEmployee = this.employees.find(x => x.id === id);
-        this.selectedEmployee = this.employeeRegistry.get(id)
-    }
-
-    cancelSelectedEmployee = () => {
-        this.selectedEmployee = undefined;
-    }
-    openForm = (id?: string) => {
-        id ? this.selectEmployee(id) : this.cancelSelectedEmployee();
-        this.editMode = true;
-    }
-    closeForm = () => {
-        this.editMode = false;
-    }
+    };
 
     createEmployee = async (employee: Employee) => {
-
+        this.loading = true;
         var anualSalary = this.getEmployeeAnnualSalary(employee);
-        this.editMode = true;
-        employee.id = uuid();
         employee.employee_annual_salary = anualSalary.toString();
-
         try {
             await agent.Employees.create(employee);
             runInAction(() => {
@@ -82,7 +94,7 @@ export default class EmployeeStore {
                 this.loading = false;
             })
         }
-    }
+    };
 
     updateEmployee = async (employee: Employee) => {
         var annualSalary = this.getEmployeeAnnualSalary(employee);
@@ -104,16 +116,14 @@ export default class EmployeeStore {
                 this.loading = false;
             })
         }
-    }
+    };
 
     deleteEmployee = async (id: string) => {
         this.loading = true;
         try {
             await agent.Employees.delete(id);
             runInAction(() => {
-                //this.employees = [...this.employees.filter(x => x.id !== id)]
                 this.employeeRegistry.delete(id);
-                if (this.selectedEmployee?.id === id) this.cancelSelectedEmployee();
                 this.loading = false;
             })
         } catch (error) {
@@ -123,13 +133,13 @@ export default class EmployeeStore {
             })
         }
 
-    }
+    };
 
     getEmployeeAnnualSalary(employee: Employee): number {
         var salary: number = +employee.employee_salary;
         var annualSalary: number = salary * 12;
         return annualSalary
-    }
+    };
 }
 
 

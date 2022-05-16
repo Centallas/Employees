@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { SyntheticEvent, useState } from "react";
+import { Link } from "react-router-dom";
 import { Button, Item, Label, Segment } from "semantic-ui-react";
-import { Employee } from "../../../app/layout/models/employee";
 import { useStore } from "../../../app/stores/store";
 
 export default observer(function EmployeeList() {
@@ -26,7 +26,8 @@ export default observer(function EmployeeList() {
                                 <div>{'Annual Salary:'} {employee.employee_annual_salary}</div>
                             </Item.Description>
                             <Item.Extra>
-                                <Button onClick={() => employeeStore.selectEmployee(employee.id)} floated='right' content='View' color='blue' />
+                                {/* <Button onClick={() => employeeStore.selectEmployee(employee.id)} floated='right' content='View' color='blue' /> */}
+                                <Button as={Link} to={`/employees/${employee.id}`} floated='right' content='View' color='blue' />
                                 <Button
                                     name={employee.id}
                                     loading={loading && target === employee.id}

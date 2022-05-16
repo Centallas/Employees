@@ -53,8 +53,8 @@ namespace API.Controllers
             // Serialize the response
             byte[] objectToCache = JsonSerializer.SerializeToUtf8Bytes(result);
             var cacheEntryOptions = new DistributedCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(60))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(120));
+                .SetSlidingExpiration(TimeSpan.FromSeconds(5))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(10));
 
             // Cache it
             await _distributedCache.SetAsync(employeesCollectionKey, objectToCache, cacheEntryOptions);
@@ -96,8 +96,8 @@ namespace API.Controllers
             // Serialize the response
             byte[] objectToCache = JsonSerializer.SerializeToUtf8Bytes(result);
             var cacheEntryOptions = new DistributedCacheEntryOptions()
-                .SetSlidingExpiration(TimeSpan.FromSeconds(60))
-                .SetAbsoluteExpiration(TimeSpan.FromSeconds(120));
+                .SetSlidingExpiration(TimeSpan.FromSeconds(5))
+                .SetAbsoluteExpiration(TimeSpan.FromSeconds(10));
 
             // Cache it
             await _distributedCache.SetAsync(employeesCollectionKey, objectToCache, cacheEntryOptions);
